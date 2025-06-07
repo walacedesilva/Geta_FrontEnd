@@ -1,13 +1,11 @@
-` +
-"```html" +
-`
 <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6 border border-gray-200 hover:shadow-lg transition-shadow duration-300">
   <div class="p-6">
     <!-- Cabeçalho do Card -->
     <div class="flex items-center mb-4">
       <img class="h-12 w-12 rounded-full object-cover mr-4" [src]="publication.userAvatarUrl || 'assets/default-avatar.png'" alt="Avatar de {{ publication.username }}">
       <div>
-        <p class="font-bold text-gray-900">{{ publication.username }}</p>
+        <!-- Nome de utilizador ATUALIZADO para ser um link -->
+        <a [routerLink]="['/profile', publication.userId]" class="font-bold text-gray-900 hover:underline">{{ publication.username }}</a>
         <p class="text-sm text-gray-500">{{ publication.createdAt | date:'medium' }}</p>
       </div>
     </div>
@@ -23,6 +21,3 @@
     </div>
   </div>
 </div>
-` +
-"```"
-+`
