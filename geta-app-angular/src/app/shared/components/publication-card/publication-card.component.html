@@ -1,0 +1,28 @@
+` +
+"```html" +
+`
+<div class="bg-white rounded-xl shadow-md overflow-hidden mb-6 border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+  <div class="p-6">
+    <!-- Cabeçalho do Card -->
+    <div class="flex items-center mb-4">
+      <img class="h-12 w-12 rounded-full object-cover mr-4" [src]="publication.userAvatarUrl || 'assets/default-avatar.png'" alt="Avatar de {{ publication.username }}">
+      <div>
+        <p class="font-bold text-gray-900">{{ publication.username }}</p>
+        <p class="text-sm text-gray-500">{{ publication.createdAt | date:'medium' }}</p>
+      </div>
+    </div>
+
+    <!-- Conteúdo da Publicação -->
+    <p class="text-gray-700 text-base">
+      {{ publication.content }}
+    </p>
+
+    <!-- Ações (opcional) -->
+    <div class="mt-4 flex justify-end space-x-4">
+      <!-- Futuros botões de like, comentário, etc. podem ir aqui -->
+    </div>
+  </div>
+</div>
+` +
+"```"
++`
