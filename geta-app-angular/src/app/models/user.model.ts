@@ -3,6 +3,9 @@ export interface User {
   username: string;
   email: string;
   createdAt: Date;
+  avatarUrl?: string;
+  bio?: string;
+  location?: string;
 }
 
 export interface LoginRequest {
@@ -17,4 +20,10 @@ export interface RegisterRequest extends LoginRequest {
 export interface LoginResponse {
   token: string;
   user: User;
+}
+
+export interface UpdateUserRequest {
+  location?: string;
+  avatarUrl?: string;
+  bio?: string;
 }

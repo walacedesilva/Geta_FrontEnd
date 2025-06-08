@@ -1,1 +1,97 @@
-<p>chat.component.ts works!</p>
+<div class="flex h-[calc(100vh-150px)] max-w-7xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
+
+  <!-- Barra Lateral de Utilizadores Online -->
+  <div class="w-1/4 bg-gray-100 border-r border-gray-200 p-4 flex flex-col">
+    <h2 class="text-lg font-bold text-gray-800 mb-4">Online ({{ onlineUsers.length }})</h2>
+    <div class="overflow-y-auto">
+      <ul>
+        <li *ngFor="let user of onlineUsers" class="flex items-center gap-3 p-2 rounded-md hover:bg-gray-200">
+          <img class="h-8 w-8 rounded-full object-cover" [src]="user.avatarUrl || 'assets/default-avatar.png'" alt="Avatar de {{ user.username }}">
+          <span class="font-medium text-gray-700">{{ user.username }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Área Principal do Chat -->
+  <div class="w-3/4 flex flex-col">
+    <!-- Cabeçalho do Chat -->
+    <div class="bg-gray-800 text-white p-4 flex justify-between items-center border-b border-gray-700">
+      <h1 class="text-xl font-bold">Chat Global</h1>
+      <div class="flex items-center space-x-2">
+        <div class="h-3 w-3 rounded-full" [ngClass]="{'bg-green-500 animate-pulse': isConnected, 'bg-red-500': !isConnected}"></div>
+        <span class="text-sm">{{ isConnected ? 'Conectado' : 'Desconectado' }}</span>
+      </div>
+    </div>
+
+    <!-- Área de Mensagens -->
+    <div #scrollMe class="flex-1 p-6 overflow-y-auto bg-gray-50">
+      <div *ngIf="isLoadingHistory" class="text-center text-gray-500">
+        <p>A carregar histórico de mensagens...</p>
+      </div>
+
+      <div *ngIf="!isLoadingHistory && messages.length === 0" class="text-center text-gray-500">
+        Ainda não há mensagens. Envie a primeira!
+      </div>
+
+      <!-- Loop através de todos os itens do chat (mensagens e notificações) -->
+      <div *ngFor="let item of messages">
+
+        <!-- Renderização de Notificações -->
+        <div *ngIf="item.type === 'notification'" class="text-center text-xs text-gray-500 my-2">
+          <span>{{ item.content }} - {{ item.timestamp | date:'shortTime' }}</span>
+        </div>
+
+        <!-- Renderização de Mensagens -->
+        <div *ngIf="item.type === 'message'" class="mb-4 flex" [ngClass]="{'justify-end': item.userId === currentUser?.id, 'justify-start': item.userId !== currentUser?.id}">
+          <div class="flex items-start gap-3 max-w-lg">
+            <img *ngIf="item.userId !== currentUser?.id" class="h-10 w-10 rounded-full object-cover" [src]="item.userAvatarUrl || 'assets/default-avatar.png'" alt="Avatar de {{ item.username }}">
+            <div class="flex-1">
+              <div class="flex items-baseline gap-2" [ngClass]="{'justify-end': item.userId === currentUser?.id}">
+                <p class="font-bold text-gray-800">{{ item.username }}</p>
+                <p class="text-xs text-gray-400">{{ item.timestamp | date:'shortTime' }}</p>
+              </div>
+              <div class="p-3 rounded-lg mt-1" [ngClass]="{'bg-blue-500 text-white': item.userId === currentUser?.id, 'bg-gray-200 text-gray-700': item.userId !== currentUser?.id}">
+                <p>{{ item.content }}</p>
+              </div>
+            </div>
+            <img *ngIf="item.userId === currentUser?.id" class="h-10 w-10 rounded-full object-cover" [src]="item.userAvatarUrl || 'assets/default-avatar.png'" alt="Avatar de {{ item.username }}">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Área de Notificação de Erro e "A Escrever" -->
+    <div class="h-6 px-6 text-sm italic flex items-center">
+      <!-- Mensagem de Erro (tem prioridade) -->
+      <p *ngIf="chatError" class="text-red-500 font-semibold">
+        {{ chatError }}
+      </p>
+
+      <!-- Indicador de "A Escrever" (mostrado apenas se não houver erro) -->
+      <p *ngIf="!chatError && typingUsers.length > 0" class="text-gray-500">
+        {{ typingUsers.join(', ') }} {{ typingUsers.length > 1 ? 'estão a escrever' : 'está a escrever' }}...
+      </p>
+    </div>
+
+    <!-- Input de Mensagem -->
+    <div class="p-4 bg-gray-100 border-t border-gray-200">
+      <form (ngSubmit)="sendMessage()" class="flex gap-3">
+        <input
+          type="text"
+          [(ngModel)]="newMessage"
+          (keyup)="onTyping()"
+          name="newMessage"
+          placeholder="Escreva a sua mensagem..."
+          class="flex-1 p-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          [disabled]="!isConnected">
+        <button
+          type="submit"
+          class="bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+          [disabled]="!newMessage.trim() || !isConnected">
+          Enviar
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
