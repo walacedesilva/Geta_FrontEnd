@@ -1,10 +1,14 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators,ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { NgIf } from '@angular/common';
+
 
 @Component({
   selector: 'app-login',
+  standalone: true,
+  imports: [ReactiveFormsModule,NgIf],
   template: `
     <div class="w-full max-w-md">
       <div class="bg-white p-8 rounded-2xl shadow-xl">
@@ -29,9 +33,14 @@ import { AuthService } from '../../../core/services/auth.service';
   `
 })
 export class LoginComponent {
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   loginForm: FormGroup;
   errorMessage: string | null = null;
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+
+  constructor() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]

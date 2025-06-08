@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
 @Component({
   selector: 'app-auth',
   template: `
@@ -6,6 +8,7 @@ import { Component } from '@angular/core';
       <router-outlet></router-outlet>
     </div>
   `,
-  styles: [`.min-h-screen-minus-header { min-height: calc(100vh - 68px); }`]
+  styles: [`.min-h-screen-minus-header { min-height: calc(100vh - 68px); }`],
+  imports: [RouterOutlet]
 })
 export class AuthComponent { }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Publication } from '../../models/publication.model';
@@ -9,8 +9,7 @@ import { environment } from '../../../environments/environment';
 })
 export class PublicationService {
   private apiUrl = `${environment.apiUrl}/publications`;
-
-  constructor(private http: HttpClient) { }
+  private http = inject(HttpClient);
 
   /**
    * Busca todas as publicações para o feed principal.

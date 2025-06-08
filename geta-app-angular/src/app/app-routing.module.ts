@@ -1,6 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './core/guards/auth.guard';
+import { authGuard } from './core/guards/auth.guard';
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-profile',
+  template: 'profile.component.html',
+})
+
+export class ProfileComponent {}
 
 // A constante de rotas precisa ser exportada
 export const routes: Routes = [
@@ -11,13 +20,12 @@ export const routes: Routes = [
   {
     path: 'home',
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent),
-    canActivate: [AuthGuard]
+    canActivate: [authGuard]
   },
-  // --- ADICIONE A NOVA ROTA AQUI ---
   {
-    path: 'profile/:id', // O ':id' é um parâmetro dinâmico para o ID do utilizador
+    path: 'profile/:id',
     loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent),
-    canActivate: [AuthGuard]
+    canActivate: [authGuard]
   },
   // --- FIM DA NOVA ROTA ---
   { path: '', redirectTo: '/home', pathMatch: 'full' },

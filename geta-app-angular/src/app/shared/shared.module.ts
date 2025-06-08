@@ -4,10 +4,10 @@ import { PublicationCardComponent } from './components/publication-card/publicat
 
 @NgModule({
   declarations: [
-    PublicationCardComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    PublicationCardComponent
   ],
   exports: [
     PublicationCardComponent // Exporta o componente para que outros módulos o possam usar

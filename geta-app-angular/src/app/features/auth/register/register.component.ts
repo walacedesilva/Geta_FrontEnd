@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators,ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-register',
+    imports: [ReactiveFormsModule,NgIf],
+  standalone: true,
   template: `
     <div class="w-full max-w-md">
       <div class="bg-white p-8 rounded-2xl shadow-xl">
@@ -32,14 +35,14 @@ import { AuthService } from '../../../core/services/auth.service';
   `
 })
 export class RegisterComponent {
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   registerForm: FormGroup;
   errorMessage: string | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router
-  ) {
+  constructor() {
     this.registerForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],

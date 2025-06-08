@@ -4,18 +4,18 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
-import { SharedModule } from '../../shared/shared.module'; // Importa o nosso módulo partilhado
+import { SharedModule } from '../../shared/shared.module';
 
-
+export { HomeComponent };
 @NgModule({
   declarations: [
-    HomeComponent
   ],
   imports: [
     CommonModule,
     HomeRoutingModule,
     ReactiveFormsModule,
-    SharedModule // Adiciona o SharedModule aqui
+    SharedModule,
+    HomeComponent
   ]
 })
 export class HomeModule { }

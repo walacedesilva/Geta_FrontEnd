@@ -1,21 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Publication } from '../../models/publication.model';
 import { PublicationService } from '../../core/services/publication.service';
+import { ReactiveFormsModule } from '@angular/forms';
+import { PublicationCardComponent } from "../../shared/components/publication-card/publication-card.component";
+import { AsyncPipe, NgIf, NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
+  imports: [ReactiveFormsModule, PublicationCardComponent, AsyncPipe, NgIf, NgFor],
 })
 export class HomeComponent implements OnInit {
   publications$!: Observable<Publication[]>;
   publicationForm: FormGroup;
 
-  constructor(
-    private publicationService: PublicationService,
-    private fb: FormBuilder
-  ) {
+  private publicationService = inject(PublicationService);
+  private fb = inject(FormBuilder);
+
+  constructor() {
     this.publicationForm = this.fb.group({
       content: ['', [Validators.required, Validators.maxLength(500)]]
     });
