@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
@@ -8,22 +9,38 @@ import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
-  private userSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
-  public user$ = this.userSubject.asObservable();
+  private userSubject: BehaviorSubject<User | null>;
+  public user$: Observable<User | null>;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    // Inicializa o BehaviorSubject com o usuário do storage apenas se estiver no navegador
+    this.userSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
+    this.user$ = this.userSubject.asObservable();
+  }
 
   public get currentUserValue(): User | null {
     return this.userSubject.value;
   }
 
   public get token(): string | null {
-    return localStorage.getItem('jwt_token');
+    // Acessa o token apenas se estiver no navegador
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('jwt_token');
+    }
+    return null;
   }
 
   private getUserFromStorage(): User | null {
-    const userJson = localStorage.getItem('current_user');
-    return userJson ? JSON.parse(userJson) : null;
+    // Acessa o storage apenas se estiver no navegador
+    if (isPlatformBrowser(this.platformId)) {
+      const userJson = localStorage.getItem('current_user');
+      return userJson ? JSON.parse(userJson) : null;
+    }
+    return null;
   }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
@@ -39,15 +56,21 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('jwt_token');
-    localStorage.removeItem('current_user');
+    // Remove do storage apenas se estiver no navegador
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('jwt_token');
+      localStorage.removeItem('current_user');
+    }
     this.userSubject.next(null);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/']); // Redirecionado para a rota de login
   }
 
   private handleAuthSuccess(response: LoginResponse): void {
-    localStorage.setItem('jwt_token', response.token);
-    localStorage.setItem('current_user', JSON.stringify(response.user));
+    // Salva no storage apenas se estiver no navegador
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('jwt_token', response.token);
+      localStorage.setItem('current_user', JSON.stringify(response.user));
+    }
     this.userSubject.next(response.user);
   }
 }

@@ -1,7 +1,8 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { App } from './app/app';
+import { AppComponent } from './app/app.component'; // Corrigido: Importa o componente correto
 import { config } from './app/app.config.server';
 
-const bootstrap = () => bootstrapApplication(App, config);
+// Corrigido: Usa AppComponent para o bootstrap
+const bootstrap = () => bootstrapApplication(AppComponent, config);
 
 export default bootstrap;

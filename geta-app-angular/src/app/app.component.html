@@ -16,13 +16,13 @@
         <span class="font-semibold hidden sm:block">Olá, {{ user.username }}</span>
 
         <!-- Link para a página de perfil do utilizador logado -->
-        <a routerLink="/profile, user.id]" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">Perfil</a>
+        <a [routerLink]="['/profile', user.id]" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">Perfil</a>
 
-        <!-- Link para a futura página de Chat -->''
+        <!-- Link para a futura página de Chat -->
         <a routerLink="/chat" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">Chat</a>
 
-        <!-- Botão para terminar a sessão -->
-        <button onclick="logout()" class="px-3 py-2 rounded-md text-sm font-medium bg-red-600 hover:bg-red-700 transition-colors">Sair</button>
+        <!-- Botão para terminar a sessão (CORRIGIDO) -->
+        <button (click)="logout()" class="px-3 py-2 rounded-md text-sm font-medium bg-red-600 hover:bg-red-700 transition-colors">Sair</button>
       </ng-container>
 
       <!--

@@ -1,14 +1,12 @@
 import { mergeApplicationConfig, ApplicationConfig } from '@angular/core';
-import { provideServerRendering, withRoutes } from '@angular/ssr';
+import { provideServerRendering } from '@angular/platform-server';
 import { appConfig } from './app.config';
-import { ServerRoute } from '@angular/ssr';
 
-export const serverRoutes: ServerRoute[] = [];
 const serverConfig: ApplicationConfig = {
   providers: [
-    provideServerRendering(withRoutes(serverRoutes))
+    provideServerRendering()
   ]
 };
 
+// Esta linha une a configuração do browser (com Zone.js) com a do servidor
 export const config = mergeApplicationConfig(appConfig, serverConfig);
-
