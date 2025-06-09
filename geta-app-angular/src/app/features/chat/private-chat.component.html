@@ -1,0 +1,68 @@
+<div class="flex flex-col h-[calc(100vh-150px)] max-w-4xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
+
+  <!-- Cabeçalho do Chat Privado -->
+  <div *ngIf="otherUser" class="bg-gray-800 text-white p-4 flex justify-between items-center border-b border-gray-700">
+    <div class="flex items-center gap-3">
+      <a routerLink="/chat" class="p-2 rounded-full hover:bg-gray-700 transition-colors">
+        <!-- Ícone de seta para voltar ao chat global -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </a>
+      <img class="h-10 w-10 rounded-full object-cover" [src]="otherUser.avatarUrl || 'assets/default-avatar.png'" alt="Avatar de {{ otherUser.username }}">
+      <h1 class="text-xl font-bold">{{ otherUser.username }}</h1>
+    </div>
+    <div class="flex items-center space-x-2">
+      <div class="h-3 w-3 rounded-full" [ngClass]="{'bg-green-500 animate-pulse': isConnected, 'bg-red-500': !isConnected}"></div>
+      <span class="text-sm">{{ isConnected ? 'Conectado' : 'Desconectado' }}</span>
+    </div>
+  </div>
+
+  <!-- Área de Mensagens -->
+  <div #scrollMe class="flex-1 p-6 overflow-y-auto bg-gray-50">
+    <div *ngIf="isLoading" class="text-center text-gray-500">
+      <p>A carregar conversa...</p>
+    </div>
+
+    <div *ngIf="!isLoading && messages.length === 0" class="text-center text-gray-500">
+      Inicie a conversa com {{ otherUser?.username }}.
+    </div>
+
+    <div *ngFor="let msg of messages" class="mb-4 flex" [ngClass]="{
+      'justify-end': msg.userId === currentUser?.id,
+      'justify-start': msg.userId !== currentUser?.id
+    }">
+      <div class="flex items-start gap-3 max-w-lg">
+        <img *ngIf="msg.userId !== currentUser?.id" class="h-10 w-10 rounded-full object-cover" [src]="msg.userAvatarUrl || 'assets/default-avatar.png'" alt="Avatar de {{ msg.username }}">
+        <div class="flex-1">
+          <div class="p-3 rounded-lg mt-1" [ngClass]="{
+            'bg-blue-500 text-white': msg.userId === currentUser?.id,
+            'bg-gray-200 text-gray-700': msg.userId !== currentUser?.id
+          }">
+            <p>{{ msg.content }}</p>
+          </div>
+          <p class="text-xs text-gray-400 mt-1" [ngClass]="{'text-right': msg.userId === currentUser?.id}">{{ msg.timestamp | date:'shortTime' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input de Mensagem -->
+  <div class="p-4 bg-gray-100 border-t border-gray-200">
+    <form (ngSubmit)="sendMessage()" class="flex gap-3">
+      <input
+        type="text"
+        [(ngModel)]="newMessage"
+        name="newMessage"
+        placeholder="Escreva a sua mensagem privada..."
+        class="flex-1 p-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        [disabled]="!isConnected">
+      <button
+        type="submit"
+        class="bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+        [disabled]="!newMessage.trim() || !isConnected">
+        Enviar
+      </button>
+    </form>
+  </div>
+</div>

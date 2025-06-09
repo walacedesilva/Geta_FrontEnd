@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule, NgIf, AsyncPipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Observable, switchMap, tap } from 'rxjs';
+import { Observable, switchMap, tap, BehaviorSubject } from 'rxjs';
 import { User } from '../../models/user.model';
 import { Publication } from '../../models/publication.model';
 import { UserService } from '../../core/services/user.service';
@@ -29,6 +29,7 @@ export class ProfileComponent implements OnInit {
   isOwnProfile = false;
   isEditMode = false;
   profileForm: FormGroup;
+  publicationsSubject = new BehaviorSubject<Publication[]>([]);
 
   private route = inject(ActivatedRoute);
   private userService = inject(UserService);
@@ -64,12 +65,12 @@ export class ProfileComponent implements OnInit {
         });
       })
     );
-
     this.publications$ = this.route.paramMap.pipe(
       switchMap(params => {
         const userId = Number(params.get('id'));
         return this.publicationService.getPublicationsByUser(userId);
-      })
+      }),
+      tap(publications => this.publicationsSubject.next(publications))
     );
   }
 
@@ -109,5 +110,25 @@ export class ProfileComponent implements OnInit {
         console.log(err);
       }
     });
+  }
+
+  /**
+   * (NOVO) Remove a publicação da lista quando o evento é recebido.
+   */
+  onPublicationDeleted(publicationId: number): void {
+    const currentPublications = this.publicationsSubject.value;
+    this.publicationsSubject.next(currentPublications.filter(p => p.id !== publicationId));
+  }
+
+  /**
+   * (NOVO) Atualiza uma publicação na lista quando o evento é recebido.
+   */
+  onPublicationUpdated(updatedPublication: Publication): void {
+    const currentPublications = this.publicationsSubject.value;
+    const index = currentPublications.findIndex(p => p.id === updatedPublication.id);
+    if (index !== -1) {
+      currentPublications[index] = updatedPublication;
+      this.publicationsSubject.next([...currentPublications]);
+    }
   }
 }

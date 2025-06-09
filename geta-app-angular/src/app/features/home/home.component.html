@@ -16,20 +16,25 @@
     </form>
   </div>
 
-  <!-- Feed de Publicações -->
-  <div>
-    <ng-container *ngIf="publications$ | async as publications; else loading">
-      <div *ngIf="publications.length > 0; else noPublications">
-        <app-publication-card *ngFor="let pub of publications" [publication]="pub">
-        </app-publication-card>
-      </div>
-      <ng-template #noPublications>
-        <p class="text-center text-gray-500 mt-8">Ainda não há publicações. Seja o primeiro a partilhar algo!</p>
-      </ng-template>
-    </ng-container>
+  <!-- Estado de Carregamento Inicial -->
+  <div *ngIf="isLoading" class="text-center p-8">
+    <p class="text-gray-500">A carregar publicações...</p>
+    <!-- Pode adicionar um spinner aqui -->
+  </div>
 
-    <ng-template #loading>
-      <p class="text-center text-gray-500 mt-8">A carregar publicações...</p>
+  <!-- Feed de Publicações -->
+  <div *ngIf="!isLoading">
+  <div *ngIf="publications && publications.length > 0; else noPublications">
+      <app-publication-card *ngFor="let pub of publications" [publication]="pub">
+      </app-publication-card>
+    </div>
+    <ng-template #noPublications>
+      <p class="text-center text-gray-500 mt-8">Ainda não há publicações. Seja o primeiro a partilhar algo!</p>
     </ng-template>
+
+    <!-- (NOVO) Indicador de Carregamento para Scroll Infinito -->
+    <div *ngIf="isLoadingMore" class="text-center p-4">
+      <p class="text-gray-500">A carregar mais publicações...</p>
+    </div>
   </div>
 </div>

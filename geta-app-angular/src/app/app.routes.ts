@@ -28,6 +28,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/chat/chat.component').then(m => m.ChatComponent),
     canActivate: [authGuard]
   },
+    {
+    // (NOVO) Rota para o chat privado, que aceita o ID do outro utilizador como parâmetro
+    path: 'chat/:userId',
+    loadComponent: () => import('./features/chat/private-chat.component').then(m => m.PrivateChatComponent),
+    canActivate: [authGuard]
+  },
   {
     // Rota padrão: redireciona o caminho vazio para '/home'.
     // Isso garante uma rota padrão para os usuários que acessam a URL raiz do aplicativo.

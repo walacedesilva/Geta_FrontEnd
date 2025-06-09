@@ -2,20 +2,19 @@ import { Component, OnDestroy, OnInit, inject, ViewChild, ElementRef, AfterViewC
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Subscription, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ChatService } from '../../core/services/chat.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Message } from '../../models/message.model';
 import { User } from '../../models/user.model';
 import { ToastService } from '../../core/services/toast.service';
-
+import { RouterLink } from '@angular/router';
 // Adicionamos um tipo para diferenciar mensagens de notificações
 type ChatItem = Message & { type: 'message' | 'notification' };
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,RouterLink],
   templateUrl: './chat.component.html',
 })
 export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
@@ -30,6 +29,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   public isLoadingHistory = true;
   public typingUsers: string[] = [];
   public onlineUsers: User[] = [];
+  public unreadCounts: Map<number, number> = new Map<number, number>(); // (NOVO) Armazena a contagem
+
 
   private typingSubject = new Subject<void>();
   private subscriptions = new Subscription();
@@ -38,15 +39,21 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   private toastService = inject(ToastService);
 
   ngOnInit(): void {
-    this.currentUser = this.authService.currentUserValue;
+   this.currentUser = this.authService.currentUserValue;
     this.loadHistoryAndStartChat();
-    this.setupTypingNotifications();
     this.setupConnectionNotifications();
 
     const onlineUsersSub = this.chatService.onlineUsers$.subscribe(users => {
       this.onlineUsers = users;
     });
+
+    // (NOVO) Subscreve às atualizações na contagem de mensagens não lidas
+    const unreadCountsSub = this.chatService.unreadCounts$.subscribe(counts => {
+      this.unreadCounts = counts;
+    });
+
     this.subscriptions.add(onlineUsersSub);
+    this.subscriptions.add(unreadCountsSub);
   }
 
   loadHistoryAndStartChat(): void {
@@ -81,28 +88,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.chatService.startConnection();
   }
 
-  setupTypingNotifications(): void {
-    const typingSub = this.chatService.userTyping$.subscribe(({ username, isTyping }) => {
-      if (username !== this.currentUser?.username) {
-        if (isTyping && !this.typingUsers.includes(username)) {
-          this.typingUsers.push(username);
-        } else if (!isTyping) {
-          this.typingUsers = this.typingUsers.filter(u => u !== username);
-        }
-      }
-    });
-
-    const selfTypingSub = this.typingSubject.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    ).subscribe(() => {
-      this.chatService.sendTypingNotification();
-    });
-
-    this.subscriptions.add(typingSub);
-    this.subscriptions.add(selfTypingSub);
-  }
-
   setupConnectionNotifications(): void {
     const userConnectedSub = this.chatService.userConnected$.subscribe(username => {
       if (username !== this.currentUser?.username) {
@@ -122,7 +107,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
-    this.chatService.stopConnection();
+    //this.chatService.stopConnection();
   }
 
   ngAfterViewChecked() {
@@ -137,8 +122,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       try {
         await this.chatService.sendMessage(messageContent);
       } catch (err) {
-        console.error("Falha ao enviar mensagem:", err);
-        this.toastService.show("A sua mensagem não pôde ser enviada.", 'error');
         this.newMessage = messageContent;
       }
     }
@@ -154,7 +137,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       timestamp: new Date(),
       type: 'notification',
       userId: 0, // Id fictício para notificações
-      username: 'System'
+      username: 'System',
+      recipientId: 0 // Valor fictício para notificações
     };
     this.messages.push(notification);
   }

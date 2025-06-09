@@ -1,4 +1,4 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
@@ -12,11 +12,11 @@ export class AuthService {
   private userSubject: BehaviorSubject<User | null>;
   public user$: Observable<User | null>;
 
-  constructor(
-    private http: HttpClient,
-    private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
+
+  constructor() {
     // Inicializa o BehaviorSubject com o usuário do storage apenas se estiver no navegador
     this.userSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
     this.user$ = this.userSubject.asObservable();
