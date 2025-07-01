@@ -34,6 +34,22 @@ export class AppComponent implements OnInit, OnDestroy {
     this.user$ = this.authService.user$;
   }
 
+   getUserName(): string {
+    return  this.authService.currentUserValue?.username || 'User';
+  }
+
+  getUserAvatar(): string {
+    return this.authService.currentUserValue?.avatarUrl || 'assets/default-avatar.png';
+  }
+
+  shouldShowHeader(): boolean {
+
+    // Verifica se o utilizador está autenticado e se não está na página de login ou registo
+    // const isAuthenticated = !!this.authService.currentUserValue;
+    // const currentUrl = this.router.url;
+    return true; //isAuthenticated ;//&& !currentUrl.startsWith('/auth');
+  }
+
   ngOnInit(): void {
     // Garante que a conexão do SignalR seja iniciada assim que o utilizador faz login
     const userSub = this.user$.subscribe(user => {

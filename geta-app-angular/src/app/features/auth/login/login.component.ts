@@ -10,26 +10,44 @@ import { NgIf } from '@angular/common';
   standalone: true,
   imports: [ReactiveFormsModule,NgIf],
   template: `
-    <div class="w-full max-w-md">
-      <div class="bg-white p-8 rounded-2xl shadow-xl">
-        <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Login</h2>
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          <div class="mb-4">
-            <input type="email" placeholder="Email" formControlName="email" class="w-full px-4 py-3 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-          </div>
-          <div class="mb-6">
-            <input type="password" placeholder="Senha" formControlName="password" class="w-full px-4 py-3 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-          </div>
-          <div *ngIf="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4" role="alert">
-            {{ errorMessage }}
-          </div>
-          <button type="submit" [disabled]="loginForm.invalid" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 transition-colors">Entrar</button>
-          <div class="text-center mt-6">
-            <a routerLink="../register" class="text-sm text-blue-600 hover:underline">Não tem uma conta? Registre-se</a>
-          </div>
-        </form>
-      </div>
+<div class="flex flex-col items-center justify-center min-h-screen bg-dark-purple">
+  <div class="w-full max-w-md p-8 space-y-8 bg-primary-purple rounded-xl shadow-lg">
+
+    <div class="text-center">
+        <h1 class="text-4xl font-bold text-accent-green">double to double</h1>
+        <p class="mt-2 text-white">Bem-vindo de volta!</p>
     </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <div>
+        <label for="email" class="text-sm font-medium text-gray-200">Email</label>
+        <input id="email" type="email" formControlName="email"
+               class="w-full px-4 py-2 mt-2 text-white bg-light-purple-card border border-transparent rounded-lg focus:ring-accent-green focus:border-accent-green"
+               placeholder="seu@email.com">
+      </div>
+
+      <div>
+        <label for="password" class="text-sm font-medium text-gray-200">Senha</label>
+        <input id="password" type="password" formControlName="password"
+               class="w-full px-4 py-2 mt-2 text-white bg-light-purple-card border border-transparent rounded-lg focus:ring-accent-green focus:border-accent-green"
+               placeholder="Sua senha">
+      </div>
+
+      <button type="submit" [disabled]="loginForm.invalid"
+              class="w-full py-3 font-semibold text-white bg-accent-orange rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-orange disabled:opacity-50">
+        Entrar
+      </button>
+    </form>
+
+    <div class="text-center">
+      <p class="text-sm text-gray-300">
+        Não tem uma conta?
+        <a routerLink="/auth/register" class="font-medium text-accent-green hover:underline">Cadastre-se</a>
+      </p>
+    </div>
+
+  </div>
+</div>
   `
 })
 export class LoginComponent {

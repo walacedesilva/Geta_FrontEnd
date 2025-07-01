@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, NgIf, AsyncPipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Observable, switchMap, tap, BehaviorSubject } from 'rxjs';
@@ -32,6 +32,7 @@ export class ProfileComponent implements OnInit {
   publicationsSubject = new BehaviorSubject<Publication[]>([]);
 
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private userService = inject(UserService);
   private publicationService = inject(PublicationService);
   private authService = inject(AuthService);
@@ -130,5 +131,15 @@ export class ProfileComponent implements OnInit {
       currentPublications[index] = updatedPublication;
       this.publicationsSubject.next([...currentPublications]);
     }
+  }
+
+    goBack(): void {
+    this.router.navigate(['/home']);
+  }
+
+  sendMessage(userId: string): void {
+    // Futuramente, navegar para a tela de mensagem privada
+    this.router.navigate(['/chat', userId]);
+    console.log('Navegar para o chat com o usuário:', userId);
   }
 }

@@ -1,23 +1,16 @@
-<div class="bg-white rounded-xl shadow-md overflow-hidden mb-6 border border-gray-200 hover:shadow-lg transition-shadow duration-300">
-  <div class="p-6">
-    <!-- Cabeçalho do Card -->
-    <div class="flex items-center mb-4">
-      <img class="h-12 w-12 rounded-full object-cover mr-4" [src]="publication.userAvatarUrl || 'assets/default-avatar.png'" alt="Avatar de {{ publication.username }}">
-      <div>
-        <!-- Nome de utilizador ATUALIZADO para ser um link -->
-        <a [routerLink]="['/profile', publication.userId]" class="font-bold text-gray-900 hover:underline">{{ publication.username }}</a>
-        <p class="text-sm text-gray-500">{{ publication.createdAt | date:'medium' }}</p>
-      </div>
-    </div>
+<div class="flex items-center p-4 mx-4 my-2 transition-transform duration-200 bg-primary-purple rounded-lg shadow-md cursor-pointer hover:scale-105"
+     [routerLink]="['/profile', publication.id]">
 
-    <!-- Conteúdo da Publicação -->
-    <p class="text-gray-700 text-base">
-      {{ publication.content }}
-    </p>
+  <img [src]="publication.userAvatarUrl || 'assets/default-avatar.png'"
+       alt="Avatar de {{ publication.username }}"
+       class="w-12 h-12 rounded-full">
 
-    <!-- Ações (opcional) -->
-    <div class="mt-4 flex justify-end space-x-4">
-      <!-- Futuros botões de like, comentário, etc. podem ir aqui -->
-    </div>
+  <div class="ml-4">
+    <h3 class="font-bold text-white">{{ publication.username }}</h3>
+    <p class="text-sm text-gray-300 truncate">{{ publication.content }}</p>
+  </div>
+
+  <div class="ml-auto">
+    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
   </div>
 </div>

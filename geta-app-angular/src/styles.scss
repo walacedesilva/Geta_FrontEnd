@@ -1,4 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    background-color: #1A103C; /* dark-purple */
+    color: #FFFFFF; /* White text */
+    font-family: sans-serif; /* A modern font will be chosen later */
+}

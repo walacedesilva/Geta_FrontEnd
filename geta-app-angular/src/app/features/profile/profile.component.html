@@ -1,77 +1,48 @@
-<!-- Container principal que aguarda os dados do utilizador -->
-<ng-container *ngIf="user$ | async as user; else loading">
+<div class="bg-dark-purple min-h-screen" *ngIf="user$ | async as user">
 
-  <!-- Modo de Visualização -->
-  <div *ngIf="!isEditMode" class="bg-white p-6 rounded-lg shadow-md mb-8 max-w-3xl mx-auto">
-    <div class="flex flex-col sm:flex-row items-center">
-      <img
-        class="h-24 w-24 rounded-full object-cover mr-0 sm:mr-6 mb-4 sm:mb-0 border-4 border-gray-200"
-        [src]="user.avatarUrl || 'assets/default-avatar.png'"
-        alt="Avatar de {{ user.username }}">
-
-      <div class="text-center sm:text-left flex-grow">
-        <h1 class="text-3xl font-bold text-gray-900">{{ user.username }}</h1>
-        <p class="text-gray-600 mt-1">{{ user.email }}</p>
-        <p class="text-sm text-gray-500 mt-2">Membro desde: {{ user.createdAt | date:'longDate' }}</p>
-      </div>
-
-      <!-- Botão para entrar no modo de edição (apenas se for o próprio perfil) -->
-      <button *ngIf="isOwnProfile" (click)="enterEditMode()" class="mt-4 sm:mt-0 bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
-        Editar Perfil
-      </button>
+  <header class="flex items-center p-4">
+    <button (click)="goBack()" class="text-white">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+    </button>
+    <div class="flex-grow text-center">
+        <img [src]="user.avatarUrl" alt="Avatar de {{ user.username }}" class="w-8 h-8 rounded-full inline-block">
     </div>
-  </div>
+  </header>
 
-  <!-- Modo de Edição -->
-  <div *ngIf="isEditMode" class="bg-white p-6 rounded-lg shadow-md mb-8 max-w-3xl mx-auto">
-    <h2 class="text-2xl font-bold mb-4 text-gray-800">Editar Perfil</h2>
-    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
-      <div class="mb-4">
-        <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
-        <input id="location" type="text" formControlName="location" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-      </div>
-      <div class="mb-6">
-        <label for="avatarUrl" class="block text-sm font-medium text-gray-700 mb-1">URL do Avatar</label>
-        <input id="avatarUrl" type="text" formControlName="avatarUrl" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-      </div>
-      <div class="mb-6">
-        <label for="bio" class="block text-sm font-medium text-gray-700 mb-1">Biografia</label>
-        <input id="bio" type="text" formControlName="bio" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-      </div>
-      <div class="flex justify-end gap-4">
-        <button type="button" (click)="cancelEdit()" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">
-          Cancelar
-        </button>
-        <button type="submit" [disabled]="profileForm.invalid" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 disabled:bg-gray-400 transition-colors">
-          Guardar Alterações
-        </button>
-      </div>
-    </form>
-  </div>
+  <main class="p-4">
+    <div class="bg-primary-purple rounded-2xl p-6 text-center shadow-lg">
 
+      <div class="relative w-24 h-24 mx-auto -mt-16">
+        <img [src]="user.avatarUrl || 'assets/default-avatar.png'" alt="Avatar de {{ user.username }}" class="w-24 h-24 rounded-full border-4 border-primary-purple">
+      </div>
 
-  <!-- Título para a secção de publicações -->
-  <h2 class="text-2xl font-semibold text-gray-800 mb-4 max-w-3xl mx-auto">Publicações</h2>
+      <h1 class="text-2xl font-bold mt-4">{{ user.username }}</h1>
+      <p class="text-md text-gray-300">Contato</p>
 
-  <!-- Container para as publicações -->
-  <ng-container *ngIf="publications$ | async as publications">
-    <div *ngIf="publications.length > 0; else noPublications" class="max-w-3xl mx-auto">
-      <app-publication-card
-        *ngFor="let pub of publications"
-        [publication]="pub">
-      </app-publication-card>
+      <div class="text-left mt-6 space-y-2 text-sm">
+          <p><span class="font-bold">Idade:</span> 28 anos</p>
+          <p><span class="font-bold">WhatsApp:</span> (67) 99888-7779</p>
+          <p><span class="font-bold">Cidade:</span> Campo Grande</p>
+      </div>
+
+      <p class="text-left text-sm text-gray-300 mt-4">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+      </p>
+
     </div>
 
-    <ng-template #noPublications>
-      <div class="text-center bg-white p-8 rounded-lg shadow-md max-w-3xl mx-auto">
-        <p class="text-gray-500">Este utilizador ainda não partilhou nada.</p>
-      </div>
-    </ng-template>
-  </ng-container>
+    <div class="mt-6 space-y-4">
+        <button class="w-full py-3 font-semibold text-primary-purple bg-white rounded-lg hover:bg-gray-200">
+            VER CURRÍCULO
+        </button>
+        <button (click)="sendMessage(user.id.toString())" class="w-full py-3 font-semibold text-white bg-accent-green rounded-lg hover:bg-green-600">
+            Enviar Mensagem
+        </button>
+    </div>
 
-</ng-container>
+  </main>
+</div>
 
-<!-- Template para o estado de carregamento -->
-<ng-template #loading>
-  <p class="text-center text-gray-500 mt-8">A carregar perfil...</p>
-</ng-template>
+<div *ngIf="(user$ | async) === null" class="flex items-center justify-center min-h-screen">
+  <p>Carregando perfil...</p>
+</div>

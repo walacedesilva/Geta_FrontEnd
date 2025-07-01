@@ -9,29 +9,59 @@ import { NgIf } from '@angular/common';
     imports: [ReactiveFormsModule,NgIf],
   standalone: true,
   template: `
-    <div class="w-full max-w-md">
-      <div class="bg-white p-8 rounded-2xl shadow-xl">
-        <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Criar Conta</h2>
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-          <div class="mb-4">
-            <input type="text" placeholder="Nome de usuário" formControlName="username" class="w-full px-4 py-3 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-          </div>
-          <div class="mb-4">
-            <input type="email" placeholder="Email" formControlName="email" class="w-full px-4 py-3 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-          </div>
-          <div class="mb-6">
-            <input type="password" placeholder="Senha" formControlName="password" class="w-full px-4 py-3 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-          </div>
-          <div *ngIf="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4" role="alert">
-            {{ errorMessage }}
-          </div>
-          <button type="submit" [disabled]="registerForm.invalid" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 transition-colors">Registrar</button>
-          <div class="text-center mt-6">
-            <a routerLink="../" class="text-sm text-blue-600 hover:underline">Já tem uma conta? Faça o login</a>
-          </div>
-        </form>
-      </div>
+<div class="flex flex-col items-center justify-center min-h-screen bg-dark-purple">
+  <div class="w-full max-w-md p-8 space-y-8 bg-primary-purple rounded-xl shadow-lg">
+
+    <div class="text-center">
+        <h1 class="text-4xl font-bold text-accent-green">double to double</h1>
+        <p class="mt-2 text-white">Crie sua conta</p>
     </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
+
+      <div>
+        <label for="name" class="text-sm font-medium text-gray-200">Nome</label>
+        <input id="name" type="text" formControlName="name"
+               class="w-full px-4 py-2 mt-2 text-white bg-light-purple-card border border-transparent rounded-lg focus:ring-accent-green focus:border-accent-green"
+               placeholder="Seu nome completo">
+      </div>
+
+      <div>
+        <label for="email" class="text-sm font-medium text-gray-200">Email</label>
+        <input id="email" type="email" formControlName="email"
+               class="w-full px-4 py-2 mt-2 text-white bg-light-purple-card border border-transparent rounded-lg focus:ring-accent-green focus:border-accent-green"
+               placeholder="seu@email.com">
+      </div>
+
+      <div>
+        <label for="password" class="text-sm font-medium text-gray-200">Senha</label>
+        <input id="password" type="password" formControlName="password"
+               class="w-full px-4 py-2 mt-2 text-white bg-light-purple-card border border-transparent rounded-lg focus:ring-accent-green focus:border-accent-green"
+               placeholder="Crie uma senha forte">
+      </div>
+
+       <div>
+        <label for="confirmPassword" class="text-sm font-medium text-gray-200">Confirme a Senha</label>
+        <input id="confirmPassword" type="password" formControlName="confirmPassword"
+               class="w-full px-4 py-2 mt-2 text-white bg-light-purple-card border border-transparent rounded-lg focus:ring-accent-green focus:border-accent-green"
+               placeholder="Confirme sua senha">
+      </div>
+
+      <button type="submit" [disabled]="registerForm.invalid"
+              class="w-full py-3 font-semibold text-white bg-accent-orange rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-orange disabled:opacity-50">
+        Cadastrar
+      </button>
+    </form>
+
+    <div class="text-center">
+      <p class="text-sm text-gray-300">
+        Já possui uma conta?
+        <a routerLink="/auth/login" class="font-medium text-accent-green hover:underline">Faça login</a>
+      </p>
+    </div>
+
+  </div>
+</div>
   `
 })
 export class RegisterComponent {

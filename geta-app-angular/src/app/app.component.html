@@ -1,47 +1,18 @@
-<!-- Cabeçalho principal da aplicação, fixo no topo da página -->
-<header class="bg-gray-900 text-white shadow-lg sticky top-0 z-50">
-  <!-- Container para alinhar o conteúdo do cabeçalho -->
-  <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-    <!-- Logótipo/Título da Aplicação com link para a página inicial -->
-    <a routerLink="/home" class="text-2xl font-bold text-green-400 hover:text-blue-300 transition-colors">Geta</a>
+ <div class="h-screen bg-dark-purple text-white">
+  <header class="flex items-center justify-between p-4 bg-primary-purple shadow-md" >
+    <button class="text-white">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+    </button>
 
-    <!-- Links de Navegação e Informações do Utilizador -->
-    <div class="flex items-center space-x-4">
-      <!--
-        Este container verifica se um utilizador está autenticado.
-        'user$ | async as user' subscreve ao Observable 'user$' do AuthService.
-        Se 'user' existir, o conteúdo dentro do ng-container é exibido.
-      -->
-      <ng-container *ngIf="user$ | async as user; else loggedOut">
-        <span class="font-semibold hidden sm:block">Olá, {{ user.username }}</span>
-
-        <!-- Link para a página de perfil do utilizador logado -->
-        <a [routerLink]="['/profile', user.id]" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">Perfil</a>
-
-        <!-- Link para a futura página de Chat -->
-        <a routerLink="/chat" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">Chat</a>
-
-        <!-- Botão para terminar a sessão (CORRIGIDO) -->
-        <button (click)="logout()" class="px-3 py-2 rounded-md text-sm font-medium bg-red-600 hover:bg-red-700 transition-colors">Sair</button>
-      </ng-container>
-
-      <!--
-        Template #loggedOut: É exibido se o utilizador NÃO estiver autenticado.
-      -->
-      <ng-template #loggedOut>
-        <a routerLink="/auth" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 transition-colors">Login</a>
-      </ng-template>
+    <div class="flex items-center">
+        <span class="mr-2">{{ getUserName() }}</span>
+        <img class="w-8 h-8 rounded-full" src="{{ getUserAvatar() }}" alt="User Avatar">
     </div>
-  </nav>
-</header>
+  </header>
 
-<!-- Área de conteúdo principal -->
-<main class="container mx-auto p-4 md:p-6 bg-gray-50 min-h-screen">
-  <!--
-    O <router-outlet> é o marcador de posição onde o Angular
-    irá renderizar o componente correspondente à rota atual.
-  -->
-  <router-outlet></router-outlet>
-</main>
+  <main class="p-4">
+    <router-outlet></router-outlet>
+  </main>
 
-<app-toast></app-toast>
+  <app-toast></app-toast>
+</div>
