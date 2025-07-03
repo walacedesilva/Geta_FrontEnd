@@ -1,10 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+/* Nova fonte "Poppins" adicionada para corresponder ao design */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  @apply bg-gray-50 font-sans;
+  /* A fonte 'Poppins' é definida como a principal, com 'Inter' como alternativa */
+  font-family: 'Poppins', 'Inter', sans-serif;
+  /* Fundo cinzento para destacar o container da aplicação */
+  @apply bg-gray-200;
 }
+

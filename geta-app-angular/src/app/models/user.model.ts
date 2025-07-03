@@ -6,6 +6,9 @@ export interface User {
   avatarUrl?: string;
   bio?: string;
   location?: string;
+  followersCount?: number;
+  followingCount?: number;
+  isFollowing?: boolean;
 }
 
 export interface LoginRequest {

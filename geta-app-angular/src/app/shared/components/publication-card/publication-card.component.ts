@@ -191,10 +191,12 @@
 //     this.loadComments();
 //   }
 // }
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { Publication } from '../../../models/publication.model';
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { PublicationService } from '../../../core/services/publication.service';
+import { catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-publication-card',
@@ -210,8 +212,32 @@ export class PublicationCardComponent {
    */
   @Input() publication!: Publication;
 
-  constructor() {
-    // O construtor deve estar vazio. Não é necessário injetar ActivatedRoute
-    // ou qualquer outra dependência para obter dados da rota.
+  private publicationService = inject(PublicationService);
+
+    toggleLike(): void {
+    if (!this.publication) return;
+
+    const hasLiked = this.publication.hasLiked;
+    const publicationId = String(this.publication.id);
+
+    // Atualização otimista da UI
+    this.publication.hasLiked = !hasLiked;
+    this.publication.likesCount = (this.publication.likesCount || 0) + (!hasLiked ? 1 : -1);
+
+    const request$ = hasLiked
+      ? this.publicationService.unlikePublication(publicationId)
+      : this.publicationService.likePublication(publicationId);
+
+    request$.pipe(
+      catchError(err => {
+        // Reverte a UI em caso de erro
+        console.error('Failed to toggle like', err);
+        if (this.publication) {
+          this.publication.hasLiked = hasLiked;
+          this.publication.likesCount = (this.publication.likesCount || 0) + (hasLiked ? 1 : -1);
+        }
+        return of(null);
+      })
+    ).subscribe();
   }
 }

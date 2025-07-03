@@ -28,11 +28,26 @@ export class UserService {
    */
   updateUser(data: UpdateUserRequest): Observable<User> {
   // Agora faz PUT para /profile apenas com o objeto no corpo
-  return this.http.put<User>(`${this.apiUrl}`, data).pipe(
-    catchError(error => {
-      console.error('Error updating user:', error);
-      throw error;
-    })
-  );
-}
+    return this.http.put<User>(`${this.apiUrl}`, data).pipe(
+      catchError(error => {
+        console.error('Error updating user:', error);
+        throw error;
+      })
+    );
+  }
+  /**
+   * Segue um utilizador.
+   * @param userId O ID do utilizador a seguir.
+   */
+  follow(userId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${userId}/follow`, {});
+  }
+
+  /**
+   * Deixa de seguir um utilizador.
+   * @param userId O ID do utilizador a deixar de seguir.
+   */
+  unfollow(userId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${userId}/unfollow`, {});
+  }
 }

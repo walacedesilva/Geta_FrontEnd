@@ -6,6 +6,7 @@ import { ChatService } from './core/services/chat.service';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NgIf, AsyncPipe } from '@angular/common';
 import { ToastComponent } from './shared/components/toast/toast.component';
+import { UiService } from './core/services/ui.service';
 
 
 import { Subscription } from 'rxjs';
@@ -23,6 +24,9 @@ import { Subscription } from 'rxjs';
 })
 export class AppComponent implements OnInit, OnDestroy {
   user$: Observable<User | null>;
+  showHeader$: Observable<boolean>;
+
+  private uiService = inject(UiService);
   private authService = inject(AuthService);
   private chatService = inject(ChatService);
   private currentUserId?: string;
@@ -32,6 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
  private ngZone = inject(NgZone);
   constructor() {
     this.user$ = this.authService.user$;
+    this.showHeader$ = this.uiService.showHeader$;
   }
 
   ngOnInit(): void {

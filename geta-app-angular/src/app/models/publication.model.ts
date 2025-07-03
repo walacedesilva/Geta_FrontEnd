@@ -7,4 +7,6 @@ export interface Publication {
   createdAt: Date;
   updatedAt: Date;
   commentCount?: number;
+  likesCount?: number;
+  hasLiked?: boolean;
 }

@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule, NgIf, AsyncPipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Observable, switchMap, tap, BehaviorSubject, map, catchError, finalize, of } from 'rxjs';
+import { Observable, switchMap, tap, BehaviorSubject, map, catchError, finalize, of, take } from 'rxjs';
 import { User } from '../../models/user.model';
 import { Publication } from '../../models/publication.model';
 import { UserService } from '../../core/services/user.service';
@@ -189,6 +189,42 @@ export class ProfileComponent implements OnInit {
         this.toastService.show('Falha ao atualizar o perfil. Tente novamente.', 'error');
         console.log(err);
       }
+    });
+  }
+
+    followUser(): void {
+    if (!this.userId || !this.user$) return;
+    this.userService.follow(this.userId).subscribe({
+      next: () => {
+        this.user$.pipe(
+          take(1),
+          tap(user => {
+            if (user) {
+              user.isFollowing = true;
+              user.followersCount = (user.followersCount || 0) + 1;
+            }
+          })
+        ).subscribe();
+      },
+      error: err => console.error('Failed to follow user', err)
+    });
+  }
+
+  unfollowUser(): void {
+    if (!this.userId || !this.user$) return;
+    this.userService.unfollow(this.userId).subscribe({
+      next: () => {
+        this.user$.pipe(
+          take(1),
+          tap(user => {
+            if (user) {
+              user.isFollowing = false;
+              user.followersCount = (user.followersCount || 0) - 1;
+            }
+          })
+        ).subscribe();
+      },
+      error: err => console.error('Failed to unfollow user', err)
     });
   }
 

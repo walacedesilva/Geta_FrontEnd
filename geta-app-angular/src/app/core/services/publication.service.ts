@@ -36,6 +36,21 @@ export class PublicationService {
   createPublication(content: string): Observable<Publication> {
     return this.http.post<Publication>(this.apiUrl, { content });
   }
+  /**
+   * "Gosta" de uma publicação.
+   * @param publicationId O ID da publicação.
+   */
+  likePublication(publicationId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${publicationId}/like`, {});
+  }
+
+  /**
+   * Remove o "gosto" de uma publicação.
+   * @param publicationId O ID da publicação.
+   */
+  unlikePublication(publicationId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${publicationId}/like`);
+  }
 
   /**
    * (NOVO) Atualiza o conteúdo de uma publicação existente.
