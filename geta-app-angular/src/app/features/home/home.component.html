@@ -1,40 +1,50 @@
 <div class="max-w-2xl mx-auto">
-  <!-- Formulário para Nova Publicação -->
+  <!-- Formulário de Nova Publicação -->
   <div class="bg-white p-4 rounded-lg shadow-md mb-6">
     <form [formGroup]="publicationForm" (ngSubmit)="onSubmit()">
       <textarea formControlName="content"
-                class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 transition-shadow"
                 rows="3"
                 placeholder="O que você está a pensar?"></textarea>
       <div class="flex justify-end mt-2">
         <button type="submit"
                 [disabled]="publicationForm.invalid"
-                class="bg-primary-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-primary-700 disabled:bg-gray-400 transition-colors">
+                class="bg-primary-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-primary-700 disabled:bg-gray-400 transition-colors shadow-sm hover:shadow-md">
           Publicar
         </button>
       </div>
     </form>
   </div>
 
-  <!-- Estado de Carregamento Inicial -->
-  <div *ngIf="isLoading" class="text-center p-8">
+  <!-- Feed de Publicações -->
+  <div *ngIf="isLoading" class="text-center py-10">
     <p class="text-gray-500">A carregar publicações...</p>
     <!-- Pode adicionar um spinner aqui -->
   </div>
 
-  <!-- Feed de Publicações -->
+  <div *ngIf="error" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow mb-6" role="alert">
+    <p class="font-bold">Erro</p>
+    <p>{{ error }}</p>
+  </div>
+
   <div *ngIf="!isLoading">
-  <div *ngIf="publications && publications.length > 0; else noPublications">
-      <app-publication-card *ngFor="let pub of publications" [publication]="pub">
-      </app-publication-card>
+    <div *ngIf="publications.length > 0; else noPublications">
+      <app-publication-card *ngFor="let publication of publications" [publication]="publication"></app-publication-card>
     </div>
     <ng-template #noPublications>
-      <p class="text-center text-gray-500 mt-8">Ainda não há publicações. Seja o primeiro a partilhar algo!</p>
+      <div class="text-center py-10 bg-white rounded-lg shadow-md">
+        <p class="text-gray-500">Ainda não há publicações. Seja o primeiro a publicar algo!</p>
+      </div>
     </ng-template>
+  </div>
 
-    <!-- (NOVO) Indicador de Carregamento para Scroll Infinito -->
-    <div *ngIf="isLoadingMore" class="text-center p-4">
-      <p class="text-gray-500">A carregar mais publicações...</p>
-    </div>
+  <!-- Botão de Carregar Mais -->
+  <div *ngIf="hasMorePublications && !isLoading" class="text-center mt-6">
+    <button (click)="loadMore()"
+            [disabled]="isLoadingMore"
+            class="bg-secondary-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-secondary-700 disabled:bg-gray-400 transition-colors shadow-sm hover:shadow-md">
+      <span *ngIf="!isLoadingMore">Carregar Mais</span>
+      <span *ngIf="isLoadingMore">A carregar...</span>
+    </button>
   </div>
 </div>

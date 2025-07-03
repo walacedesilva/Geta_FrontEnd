@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule, NgIf, AsyncPipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Observable, switchMap, tap, BehaviorSubject } from 'rxjs';
+import { Observable, switchMap, tap, BehaviorSubject, map, catchError, finalize, of } from 'rxjs';
 import { User } from '../../models/user.model';
 import { Publication } from '../../models/publication.model';
 import { UserService } from '../../core/services/user.service';
@@ -30,6 +30,16 @@ export class ProfileComponent implements OnInit {
   isEditMode = false;
   profileForm: FormGroup;
   publicationsSubject = new BehaviorSubject<Publication[]>([]);
+  error: string | null = null;
+  userId: string | null = null;
+
+  // Propriedades para as publicações
+  publications: Publication[] = [];
+  isLoadingPublications = false;
+  publicationsError: string | null = null;
+  currentPage = 1;
+  pageSize = 10;
+  totalPages = 0;
 
   private route = inject(ActivatedRoute);
   private userService = inject(UserService);
@@ -51,7 +61,15 @@ export class ProfileComponent implements OnInit {
     const profileId$ = this.route.paramMap.pipe(
       switchMap(params => {
         const id = Number(params.get('id'));
+        this.userId = id.toString(); // Armazenar o ID do utilizador para uso posterior
+        this.loadPublications(true);
+
+        if (isNaN(id)) {
+          this.toastService.show('ID de perfil inválido.', 'error');
+          return [];
+        }
         this.checkIfOwnProfile(id);
+
         return this.userService.getUser(id);
       })
     );
@@ -59,30 +77,90 @@ export class ProfileComponent implements OnInit {
     this.user$ = profileId$.pipe(
       tap(user => {
         // Preenche o formulário com os dados atuais quando o utilizador é carregado
-        this.profileForm.patchValue({
-          location: user.location,
-          avatarUrl: user.avatarUrl,
-          bio: user.bio,
-          memberSince: user.memberSince
-        });
+        this.profileForm.patchValue(user);
+        this.loadPublications(true); // Carregar as publicações após obter o utilizador
       })
     );
+
     this.publications$ = this.route.paramMap.pipe(
       switchMap(params => {
         const userId = Number(params.get('id'));
-        return this.publicationService.getPublicationsByUser(userId);
+        return this.publicationService.getPublicationsByUserId(userId.toString(), 1, 10);
       }),
-      tap(publications => this.publicationsSubject.next(publications))
+      // Map the paged result to just the array of publications
+      tap(pagedResult => this.publicationsSubject.next(pagedResult.items)),
+      // Extract the items array for the observable
+      // (Assuming the paged result has an 'items' property)
+      // If your property is named differently, adjust accordingly
+      map(pagedResult => pagedResult.items)
     );
+  }
+
+  loadPublications(isInitialLoad = false): void {
+    if (!this.userId || this.isLoadingPublications) return;
+
+    if (isInitialLoad) {
+      this.isLoadingPublications = true;
+      this.currentPage = 1;
+      this.publications = [];
+    }
+
+    this.publicationsError = null;
+
+    this.publicationService.getPublicationsByUserId(this.userId, this.currentPage, this.pageSize).pipe(
+      tap(pagedResult => {
+        if (pagedResult && Array.isArray(pagedResult.items)) {
+          this.publications.push(...pagedResult.items);
+          this.totalPages = Math.ceil(pagedResult.totalCount / this.pageSize);
+        }
+      }),
+      catchError(err => {
+        this.publicationsError = 'Não foi possível carregar as publicações.';
+        console.error(err);
+        return of(null);
+      }),
+      finalize(() => {
+        this.isLoadingPublications = false;
+      })
+    ).subscribe();
+  }
+
+  loadMorePublications(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadPublications();
+    }
+  }
+
+  get hasMorePublications(): boolean {
+    return this.currentPage < this.totalPages;
+  }
+
+  enterEditMode(): void {
+    this.isEditMode = true;
+  }
+
+  onSubmit(): void {
+    if (this.profileForm.invalid || !this.userId) {
+      return;
+    }
+    this.userService.updateUser(this.profileForm.value).subscribe({
+      next: updatedUser => {
+        this.profileForm.patchValue(updatedUser);
+        this.isEditMode = false;
+        // Atualizar o observable do utilizador para refletir as alterações
+        this.user$ = of(updatedUser);
+      },
+      error: err => {
+        console.error('Update failed', err);
+        this.error = 'Falha ao atualizar o perfil.';
+      },
+    });
   }
 
   private checkIfOwnProfile(profileId: number): void {
     const currentUserId = this.authService.currentUserValue?.id;
     this.isOwnProfile = currentUserId === profileId;
-  }
-
-  enterEditMode(): void {
-    this.isEditMode = true;
   }
 
   cancelEdit(): void {

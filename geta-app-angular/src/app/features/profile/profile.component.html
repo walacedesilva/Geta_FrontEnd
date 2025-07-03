@@ -1,5 +1,5 @@
 <!-- Container principal que aguarda os dados do utilizador -->
-<ng-container *ngIf="user$ | async as user; else loading">
+<div *ngIf="user$ | async as user; else loadingOrError" class="max-w-4xl mx-auto">
 
   <!-- Modo de Visualização -->
   <div *ngIf="!isEditMode" class="bg-white p-6 rounded-lg shadow-md mb-8 max-w-3xl mx-auto">
@@ -26,6 +26,14 @@
   <div *ngIf="isEditMode" class="bg-white p-6 rounded-lg shadow-md mb-8 max-w-3xl mx-auto">
     <h2 class="text-2xl font-bold mb-4 text-gray-800">Editar Perfil</h2>
     <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+       <div class="mb-4">
+        <label for="username" class="block text-gray-700">Nome de utilizador</label>
+        <input id="username" type="text" formControlName="username" class="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+      </div>
+      <div class="mb-4">
+        <label for="email" class="block text-gray-700">Email</label>
+        <input id="email" type="email" formControlName="email" class="w-full px-4 py-2 mt-2 border rounded-lg bg-gray-200 cursor-not-allowed">
+      </div>
       <div class="mb-4">
         <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
         <input id="location" type="text" formControlName="location" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -53,25 +61,38 @@
   <!-- Título para a secção de publicações -->
   <h2 class="text-2xl font-semibold text-gray-800 mb-4 max-w-3xl mx-auto">Publicações</h2>
 
-  <!-- Container para as publicações -->
-  <ng-container *ngIf="publications$ | async as publications">
-    <div *ngIf="publications.length > 0; else noPublications" class="max-w-3xl mx-auto">
-      <app-publication-card
-        *ngFor="let pub of publications"
-        [publication]="pub">
-      </app-publication-card>
+  <!-- Secção de Publicações -->
+  <div class="bg-white p-6 rounded-lg shadow-md mb-8 max-w-3xl mx-auto">
+    <div *ngIf="isLoadingPublications" class="text-center py-10">
+      <p class="text-gray-500">A carregar publicações...</p>
     </div>
 
-    <ng-template #noPublications>
-      <div class="text-center bg-white p-8 rounded-lg shadow-md max-w-3xl mx-auto">
-        <p class="text-gray-500">Este utilizador ainda não partilhou nada.</p>
-      </div>
-    </ng-template>
-  </ng-container>
+    <div *ngIf="publicationsError" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow mb-6" role="alert">
+      <p>{{ publicationsError }}</p>
+    </div>
 
-</ng-container>
+    <div *ngIf="!isLoadingPublications && publications.length > 0">
+      <app-publication-card *ngFor="let publication of publications" [publication]="publication"></app-publication-card>
+    </div>
 
-<!-- Template para o estado de carregamento -->
-<ng-template #loading>
-  <p class="text-center text-gray-500 mt-8">A carregar perfil...</p>
+    <div *ngIf="!isLoadingPublications && publications.length === 0 && !publicationsError" class="text-center py-10 bg-white rounded-lg shadow-md">
+      <p class="text-gray-500">Este utilizador ainda não fez nenhuma publicação.</p>
+    </div>
+
+    <!-- Botão de Carregar Mais -->
+    <div *ngIf="hasMorePublications && !isLoadingPublications" class="text-center mt-6">
+      <button (click)="loadMorePublications()" class="bg-secondary-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-secondary-700 transition-colors">
+        Carregar Mais
+      </button>
+    </div>
+  </div>
+
+</div>
+<ng-template #loadingOrError>
+  <div *ngIf="error; else loading" class="text-center text-red-500 p-6 bg-red-100 rounded-lg">
+    {{ error }}
+  </div>
+  <ng-template #loading>
+    <div class="text-center p-6">A carregar perfil...</div>
+  </ng-template>
 </ng-template>

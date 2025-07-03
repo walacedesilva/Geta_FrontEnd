@@ -6,4 +6,5 @@ export interface Publication {
   content: string;
   createdAt: Date;
   updatedAt: Date;
+  commentCount?: number;
 }

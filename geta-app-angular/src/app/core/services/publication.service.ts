@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Publication } from '../../models/publication.model';
 import { PagedResult } from '../../models/paged-result.model'; // (NOVO) Importar PagedResult
@@ -12,20 +12,25 @@ export class PublicationService {
   private apiUrl = `${environment.apiUrl}/publications`;
   private http = inject(HttpClient);
 
-  getPublications(pageNumber = 1, pageSize = 10): Observable<PagedResult<Publication>> {
-    const params = new HttpParams()
-      .set('pageNumber', pageNumber.toString())
-      .set('pageSize', pageSize.toString());
-
-    return this.http.get<PagedResult<Publication>>(this.apiUrl, { params });
-  }
-
-  getPublicationsByUser(userId: number): Observable<Publication[]> {
-    return this.http.get<Publication[]>(`${this.apiUrl}/user/${userId}`);
+  getPublications(page: number, pageSize: number): Observable<PagedResult<Publication>> {
+    return this.http.get<PagedResult<Publication>>(`${this.apiUrl}?page=${page}&pageSize=${pageSize}`);
   }
 
   getPublicationById(id: string): Observable<Publication> {
     return this.http.get<Publication>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * Busca as publicações de um utilizador específico com paginação.
+   * @param userId O ID do utilizador.
+   * @param page A página a ser retornada.
+   * @param pageSize O número de itens por página.
+   * @returns Um Observable com o resultado paginado das publicações.
+   */
+  getPublicationsByUserId(userId: string, page: number, pageSize: number): Observable<PagedResult<Publication>> {
+    // Este endpoint assume que a sua API pode buscar publicações de um utilizador.
+    // Ex: GET /users/{userId}/publications
+    return this.http.get<PagedResult<Publication>>(`${environment.apiUrl}/Publications/${userId}/publications?page=${page}&pageSize=${pageSize}`);
   }
 
   createPublication(content: string): Observable<Publication> {
