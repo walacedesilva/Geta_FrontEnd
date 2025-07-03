@@ -2,7 +2,7 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  createdAt: Date;
+  memberSince: Date;
   avatarUrl?: string;
   bio?: string;
   location?: string;

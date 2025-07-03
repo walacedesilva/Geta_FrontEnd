@@ -69,9 +69,10 @@
           <div class="flex items-start gap-3 max-w-lg">
             <img *ngIf="item.userId !== currentUser?.id" class="h-10 w-10 rounded-full object-cover" [src]="item.userAvatarUrl || 'assets/default-avatar.png'" alt="Avatar de {{ item.username }}">
             <div class="flex-1">
-              <div class="flex items-baseline gap-2" [ngClass]="{'justify-end': item.userId === currentUser?.id}">
+              <div class="flex items-baseline gap-2" [ngClass]="{'justify-end': item.userId === currentUser?.id, 'justify-start': item.userId !== currentUser?.id}">
+                <p class="text-sm text-gray-600">{{ item.userId !== currentUser?.id ? item.username : 'Você' }}</p>
                 <p class="font-bold text-gray-800">{{ item.username }}</p>
-                <p class="text-xs text-gray-400">{{ item.timestamp | date:'shortTime' }}</p>
+                <p class="text-xs text-gray-400">{{ item.timestamp ? (item.timestamp | date:'shortTime') : '' }}</p>
               </div>
               <div class="p-3 rounded-lg mt-1" [ngClass]="{'bg-blue-500 text-white': item.userId === currentUser?.id, 'bg-gray-200 text-gray-700': item.userId !== currentUser?.id}">
                 <p>{{ item.content }}</p>

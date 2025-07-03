@@ -122,7 +122,7 @@ export class PrivateChatComponent implements OnInit, OnDestroy, AfterViewChecked
       try {
         await this.chatService.sendPrivateMessage(this.otherUserId, messageContent);
         const optimisticMessage: ChatItem = {
-            userId: this.currentUser.id,
+            userId: this.currentUser?.id,
             recipientId: this.otherUserId,
             username: this.currentUser.username,
             avatarUrl: this.currentUser.avatarUrl,

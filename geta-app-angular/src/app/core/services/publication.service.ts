@@ -24,6 +24,10 @@ export class PublicationService {
     return this.http.get<Publication[]>(`${this.apiUrl}/user/${userId}`);
   }
 
+  getPublicationById(id: string): Observable<Publication> {
+    return this.http.get<Publication>(`${this.apiUrl}/${id}`);
+  }
+
   createPublication(content: string): Observable<Publication> {
     return this.http.post<Publication>(this.apiUrl, { content });
   }

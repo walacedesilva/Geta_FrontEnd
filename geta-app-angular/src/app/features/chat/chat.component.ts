@@ -59,7 +59,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   loadHistoryAndStartChat(): void {
     const historySub = this.chatService.getChatHistory().subscribe({
       next: (history) => {
-        this.messages = history.map(msg => ({ ...msg, timestamp: new Date(msg.timestamp), type: 'message' }));
+        this.messages = history.map(msg => ({
+          ...msg,
+          timestamp: this.parseValidDate(msg.timestamp) ?? new Date(),
+          type: 'message'
+        }));
         this.isLoadingHistory = false;
         this.startRealtimeChat();
       },
@@ -73,9 +77,13 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.subscriptions.add(historySub);
   }
 
+  private parseValidDate(input: string | number | Date | undefined): Date | null {
+    const date = new Date(input as string | number | Date);
+    return isNaN(date.getTime()) ? null : date;
+  }
   startRealtimeChat(): void {
     const messageSub = this.chatService.messageReceived$.subscribe((message: Message) => {
-      this.messages.push({ ...message, timestamp: new Date(message.timestamp), type: 'message' });
+      this.messages.push({ ...message, timestamp: this.parseValidDate(message.timestamp) ?? new Date(), type: 'message' });
     });
 
     const statusSub = this.chatService.connectionStatus$.subscribe(status => {

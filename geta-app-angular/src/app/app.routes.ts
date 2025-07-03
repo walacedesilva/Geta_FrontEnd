@@ -15,6 +15,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent),
     canActivate: [authGuard] // Protege a rota, exigindo autenticação.
   },
+    {
+    // Rota para a página de registo
+    // Utiliza 'loadComponent' para carregar o componente standalone de forma preguiçosa.
+    path: 'register',
+    loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent),
+  },
   {
     // Rota para a página de perfil do utilizador
     // O ':id' é um parâmetro dinâmico que irá conter o ID do utilizador.
@@ -30,8 +36,13 @@ export const routes: Routes = [
   },
     {
     // (NOVO) Rota para o chat privado, que aceita o ID do outro utilizador como parâmetro
-    path: 'chat/:userId',
+    path: 'chat/:id',
     loadComponent: () => import('./features/chat/private-chat.component').then(m => m.PrivateChatComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'publication/:id',
+    loadComponent: () => import('./shared/components/publication-card/publication-card.component').then(m => m.PublicationCardComponent),
     canActivate: [authGuard]
   },
   {

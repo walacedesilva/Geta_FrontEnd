@@ -1,0 +1,18 @@
+<div class="flex items-start space-x-3 py-4">
+  <!-- Avatar do Usuário -->
+  <a [routerLink]="['/profile', comment.userId]">
+    <img class="h-10 w-10 rounded-full object-cover" [src]="comment.userAvatarUrl || 'assets/default-avatar.png'" alt="Avatar de {{ comment.username }}">
+  </a>
+
+  <!-- Corpo do Comentário -->
+  <div class="flex-1">
+    <div class="bg-gray-100 rounded-xl p-3">
+      <!-- Nome do Usuário -->
+      <a [routerLink]="['/profile', comment.userId]" class="font-semibold text-sm text-gray-800 hover:underline">{{ comment.username }}</a>
+      <!-- Conteúdo do Comentário -->
+      <p class="text-gray-700 text-sm whitespace-pre-wrap">{{ comment.content }}</p>
+    </div>
+    <!-- Data do Comentário -->
+    <p class="text-xs text-gray-500 mt-1 px-2">{{ comment.createdAt | date:'short' }}</p>
+  </div>
+</div>

@@ -1,23 +1,90 @@
-<div class="bg-white rounded-xl shadow-md overflow-hidden mb-6 border border-gray-200 hover:shadow-lg transition-shadow duration-300">
-  <div class="p-6">
-    <!-- Cabeçalho do Card -->
-    <div class="flex items-center mb-4">
-      <img class="h-12 w-12 rounded-full object-cover mr-4" [src]="publication.userAvatarUrl || 'assets/default-avatar.png'" alt="Avatar de {{ publication.username }}">
-      <div>
-        <!-- Nome de utilizador ATUALIZADO para ser um link -->
-        <a [routerLink]="['/profile', publication.userId]" class="font-bold text-gray-900 hover:underline">{{ publication.username }}</a>
-        <p class="text-sm text-gray-500">{{ publication.createdAt | date:'medium' }}</p>
+<div class="max-w-3xl mx-auto">
+  <!-- Botão de Voltar -->
+  <div class="mb-4">
+    <a routerLink="/home" class="inline-flex items-center text-primary-600 hover:text-primary-800 transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+      </svg>
+      Voltar para o Feed
+    </a>
+  </div>
+
+  <!-- Container da Publicação -->
+  <ng-container *ngIf="publication$ | async as publication; else loadingOrError">
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+      <div class="p-6 md:p-8">
+        <!-- Cabeçalho com informações do usuário -->
+        <div class="flex items-center mb-4">
+          <a [routerLink]="['/profile', publication.userId]">
+            <img class="h-12 w-12 rounded-full object-cover mr-4" [src]="publication.userAvatarUrl || 'assets/default-avatar.png'" alt="Avatar de {{ publication.username }}">
+          </a>
+          <div>
+            <a [routerLink]="['/profile', publication.userId]" class="font-bold text-lg text-gray-900 hover:underline hover:text-primary-600">{{ publication.username }}</a>
+            <p class="text-sm text-gray-500">{{ publication.createdAt | date:'fullDate' }} às {{ publication.createdAt | date:'shortTime' }}</p>
+          </div>
+        </div>
+
+        <!-- Conteúdo da Publicação -->
+        <p class="text-gray-800 text-base leading-relaxed whitespace-pre-wrap mt-4">
+          {{ publication.content }}
+        </p>
       </div>
     </div>
 
-    <!-- Conteúdo da Publicação -->
-    <p class="text-gray-700 text-base">
-      {{ publication.content }}
-    </p>
+    <!-- Seção de Comentários -->
+    <div class="mt-8">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">Comentários</h3>
+      <div class="bg-white rounded-lg shadow p-4 md:p-6">
+        <!-- Formulário para Novo Comentário -->
+        <ng-container *ngIf="currentUser$ | async as currentUser">
+          <form [formGroup]="commentForm" (ngSubmit)="onCommentSubmit()" class="flex items-start space-x-3 mb-6">
+            <img class="h-10 w-10 rounded-full object-cover" [src]="currentUser.avatarUrl || 'assets/default-avatar.png'" alt="Seu avatar">
+            <div class="flex-1">
+              <textarea formControlName="content"
+                        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        rows="2"
+                        placeholder="Escreva um comentário..."></textarea>
+              <div class="flex justify-end mt-2">
+                <button type="submit"
+                        [disabled]="commentForm.invalid"
+                        class="bg-primary-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-primary-700 disabled:bg-gray-400 transition-colors">
+                  Comentar
+                </button>
+              </div>
+            </div>
+          </form>
+        </ng-container>
 
-    <!-- Ações (opcional) -->
-    <div class="mt-4 flex justify-end space-x-4">
-      <!-- Futuros botões de like, comentário, etc. podem ir aqui -->
+        <!-- Lista de Comentários -->
+        <ng-container *ngIf="comments$ | async as comments; else commentsLoading">
+          <div *ngIf="comments.length > 0; else noComments" class="space-y-2 divide-y divide-gray-200">
+            <app-comment-card *ngFor="let comment of comments" [comment]="comment"></app-comment-card>
+          </div>
+          <ng-template #noComments>
+            <div class="text-center text-gray-500 py-6">
+              <p>Nenhum comentário ainda. Seja o primeiro a comentar!</p>
+            </div>
+          </ng-template>
+        </ng-container>
+        <ng-template #commentsLoading>
+          <div class="text-center text-gray-500 py-6">
+            <p>A carregar comentários...</p>
+          </div>
+        </ng-template>
+      </div>
     </div>
-  </div>
+  </ng-container>
+
+  <!-- Template para Loading ou Erro da Publicação -->
+  <ng-template #loadingOrError>
+    <div *ngIf="error; else loading" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow" role="alert">
+      <p class="font-bold">Erro</p>
+      <p>{{ error }}</p>
+    </div>
+    <ng-template #loading>
+        <div class="text-center py-10">
+            <p class="text-gray-500">A carregar publicação...</p>
+        </div>
+    </ng-template>
+  </ng-template>
 </div>

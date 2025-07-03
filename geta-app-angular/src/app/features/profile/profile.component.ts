@@ -42,7 +42,8 @@ export class ProfileComponent implements OnInit {
     this.profileForm = this.fb.group({
       location: ['', [Validators.required, Validators.minLength(3)]],
       avatarUrl: [''],
-      bio: ['']
+      bio: [''],
+      createdAt: new Date(),
     });
   }
 
@@ -61,7 +62,8 @@ export class ProfileComponent implements OnInit {
         this.profileForm.patchValue({
           location: user.location,
           avatarUrl: user.avatarUrl,
-          bio: user.bio
+          bio: user.bio,
+          memberSince: user.memberSince
         });
       })
     );

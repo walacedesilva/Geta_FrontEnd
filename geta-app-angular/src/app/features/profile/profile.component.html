@@ -12,11 +12,11 @@
       <div class="text-center sm:text-left flex-grow">
         <h1 class="text-3xl font-bold text-gray-900">{{ user.username }}</h1>
         <p class="text-gray-600 mt-1">{{ user.email }}</p>
-        <p class="text-sm text-gray-500 mt-2">Membro desde: {{ user.createdAt | date:'longDate' }}</p>
+        <p class="text-sm text-gray-500 mt-2">Membro desde: {{ user.memberSince | date:'longDate' }}</p>
       </div>
 
       <!-- Botão para entrar no modo de edição (apenas se for o próprio perfil) -->
-      <button *ngIf="isOwnProfile" (click)="enterEditMode()" class="mt-4 sm:mt-0 bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+      <button *ngIf="isOwnProfile" (click)="enterEditMode()" class="mt-4 sm:mt-0 bg-primary-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-primary-700 transition-colors">
         Editar Perfil
       </button>
     </div>
@@ -42,7 +42,7 @@
         <button type="button" (click)="cancelEdit()" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">
           Cancelar
         </button>
-        <button type="submit" [disabled]="profileForm.invalid" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 disabled:bg-gray-400 transition-colors">
+        <button type="submit" [disabled]="profileForm.invalid" class="bg-secondary-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-secondary-700 disabled:bg-gray-400 transition-colors">
           Guardar Alterações
         </button>
       </div>
