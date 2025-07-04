@@ -133,9 +133,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.publicationService.getPublications(this.currentPage, this.pageSize).pipe(
       tap((pagedResult: PagedResult<Publication> | null) => {
         // Verificação de segurança para garantir que a resposta da API tem o formato esperado
-        if (pagedResult && Array.isArray(pagedResult)) {
-          this.publications.push(...pagedResult);
-          this.totalPages = Math.ceil(pagedResult.length / this.pageSize);
+        if (pagedResult && Array.isArray(pagedResult.items)) {
+          this.publications.push(...pagedResult.items);
+          this.totalPages = Math.ceil(pagedResult.totalCount / this.pageSize);
         } else {
           // Regista um aviso se a estrutura de dados for inesperada, para ajudar na depuração
           console.warn('Estrutura de dados inesperada recebida para publicações paginadas:', pagedResult);

@@ -26,6 +26,10 @@ export class AuthService {
     return this.userSubject.value;
   }
 
+  public setCurrentUser(user: User | null): void {
+     this.userSubject.next(user);
+   }
+
   public get token(): string | null {
     // Acessa o token apenas se estiver no navegador
     if (isPlatformBrowser(this.platformId)) {

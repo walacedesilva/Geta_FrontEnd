@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard'; // Importar o AuthGuard funcional
+import { PublicationViewComponent } from './features/publication-view/publication-view.component';
 
 export const routes: Routes = [
   {
@@ -42,7 +43,7 @@ export const routes: Routes = [
   },
   {
     path: 'publication/:id',
-    loadComponent: () => import('./shared/components/publication-card/publication-card.component').then(m => m.PublicationCardComponent),
+    component: PublicationViewComponent, // O componente de PÁGINA que sabe buscar os dados
     canActivate: [authGuard]
   },
   {

@@ -191,7 +191,7 @@
 //     this.loadComments();
 //   }
 // }
-import { Component, inject, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, Input } from '@angular/core';
 import { Publication } from '../../../models/publication.model';
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -213,6 +213,7 @@ export class PublicationCardComponent {
   @Input() publication!: Publication;
 
   private publicationService = inject(PublicationService);
+  private cdr = inject(ChangeDetectorRef);
 
     toggleLike(): void {
     if (!this.publication) return;
@@ -223,6 +224,9 @@ export class PublicationCardComponent {
     // Atualização otimista da UI
     this.publication.hasLiked = !hasLiked;
     this.publication.likesCount = (this.publication.likesCount || 0) + (!hasLiked ? 1 : -1);
+
+     // Força o Angular a verificar as alterações neste componente
+    this.cdr.markForCheck();
 
     const request$ = hasLiked
       ? this.publicationService.unlikePublication(publicationId)
