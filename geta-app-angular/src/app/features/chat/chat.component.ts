@@ -39,7 +39,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   private toastService = inject(ToastService);
 
   ngOnInit(): void {
-   this.currentUser = this.authService.currentUserValue;
     this.loadHistoryAndStartChat();
     this.setupConnectionNotifications();
 

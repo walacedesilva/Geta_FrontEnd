@@ -1,4 +1,15 @@
 <div class="max-w-2xl mx-auto">
+  <h1 class="text-3xl font-bold">Feed</h1>
+  <p class="text-primary-200 mt-1">Veja as últimas publicações</p>
+  <hr class="my-4 border-gray-300">
+  <!-- Verifica se o utilizador está autenticado -->
+  <!-- <div *ngIf="user$ | async as user; else loggedOut">
+    <p class="text-gray-600 mb-4">Olá, {{ user.username }}!</p>
+  </div>
+  <ng-template #loggedOut>
+    <p class="text-gray-600 mb-4">Por favor, faça login para ver as publicações.</p>
+  </ng-template> -->
+
   <!-- Formulário de Nova Publicação -->
   <div class="bg-white p-4 rounded-lg shadow-md mb-6">
     <form [formGroup]="publicationForm" (ngSubmit)="onSubmit()">

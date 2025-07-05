@@ -1,13 +1,15 @@
+import { User } from './../../models/user.model';
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, NgIf, NgFor } from '@angular/common';
-import { catchError, finalize, of, Subscription, tap } from 'rxjs';
+import { catchError, finalize, Observable, of, Subscription, tap } from 'rxjs';
 import { Publication } from '../../models/publication.model';
 import { PublicationService } from '../../core/services/publication.service';
 import { ToastService } from '../../core/services/toast.service';
 import { PublicationCardComponent } from "../../shared/components/publication-card/publication-card.component";
 import { PagedResult } from '../../models/paged-result.model';
-
+import { RouterModule } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -16,7 +18,8 @@ import { PagedResult } from '../../models/paged-result.model';
     ReactiveFormsModule,
     PublicationCardComponent,
     NgIf,
-    NgFor
+    NgFor,
+    RouterModule
   ],
   templateUrl: './home.component.html',
 })
@@ -29,14 +32,18 @@ export class HomeComponent implements OnInit, OnDestroy {
   totalPages = 0;
   pageSize = 10;
   private subscriptions = new Subscription();
+  user$: Observable<User | null>;
 
   private publicationService = inject(PublicationService);
   private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+
 
   error: string | null = null;
 
   constructor() {
+    this.user$ = this.authService.user$;
     this.publicationForm = this.fb.group({
       content: ['', [Validators.required, Validators.maxLength(500)]]
     });
